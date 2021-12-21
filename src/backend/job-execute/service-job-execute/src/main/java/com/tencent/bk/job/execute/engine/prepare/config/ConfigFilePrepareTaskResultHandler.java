@@ -22,12 +22,17 @@
  * IN THE SOFTWARE.
  */
 
-package com.tencent.bk.job.execute.service;
+package com.tencent.bk.job.execute.engine.prepare.config;
 
-import com.tencent.bk.job.execute.model.ServersDTO;
 
-public interface AgentService {
-    String getLocalAgentBindIp();
+import com.tencent.bk.job.execute.engine.prepare.JobTaskContext;
 
-    ServersDTO getLocalServersDTO();
+public interface ConfigFilePrepareTaskResultHandler {
+
+    void onSuccess(JobTaskContext taskContext);
+
+    void onStopped(JobTaskContext taskContext);
+
+    void onFailed(JobTaskContext taskContext);
+
 }

@@ -46,7 +46,12 @@ public enum TaskFileTypeEnum {
     /**
      * 文件源文件
      */
-    FILE_SOURCE(3);
+    FILE_SOURCE(3),
+
+    /**
+     * 配置文件
+     */
+    CONFIG_FILE(4);
 
     private int type;
 

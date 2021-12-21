@@ -22,12 +22,21 @@
  * IN THE SOFTWARE.
  */
 
-package com.tencent.bk.job.execute.service;
+package com.tencent.bk.job.execute.engine.prepare;
 
-import com.tencent.bk.job.execute.model.ServersDTO;
-
-public interface AgentService {
-    String getLocalAgentBindIp();
-
-    ServersDTO getLocalServersDTO();
+public class JobTaskContextUtil {
+    /**
+     * 根据必要参数生成简单的任务上下文
+     *
+     * @param isForRetry 是否为重试任务
+     * @return 任务上下文
+     */
+    public static JobTaskContext getSimpleTaskContext(boolean isForRetry) {
+        return new JobTaskContext() {
+            @Override
+            public boolean isForRetry() {
+                return isForRetry;
+            }
+        };
+    }
 }
