@@ -22,27 +22,39 @@
  * IN THE SOFTWARE.
  */
 
-package com.tencent.bk.job.execute.engine.util;
+package com.tencent.bk.job.execute.api.esb.common;
 
-import static com.tencent.bk.job.common.constant.JobConstants.DEFAULT_JOB_TIMEOUT_SECONDS;
-import static com.tencent.bk.job.common.constant.JobConstants.MAX_JOB_TIMEOUT_SECONDS;
+import com.tencent.bk.job.common.constant.ErrorCode;
+import com.tencent.bk.job.common.exception.InternalException;
+import com.tencent.bk.job.common.util.FileUtil;
+import com.tencent.bk.job.common.util.JobUUID;
+import com.tencent.bk.job.execute.engine.consts.FileDirTypeConf;
+import com.tencent.bk.job.execute.engine.util.NFSUtils;
 
-public class TimeoutUtils {
+import java.io.File;
+
+public class ConfigFileUtil {
 
     /**
-     * 调整任务超时时间
+     * 将base64编码的配置文件保存至本地
      *
-     * @param timeout 超时时间
-     * @return 超时时间
+     * @param jobStorageRootPath 本地存储根路径
+     * @param userName           操作者
+     * @param fileName           文件名称
+     * @param base64Content      base64编码的文件内容
+     * @return 保存路径
      */
-    public static Integer adjustTaskTimeout(Integer timeout) {
-        if (timeout == null) {
-            return DEFAULT_JOB_TIMEOUT_SECONDS;
+    public static String saveConfigFileToLocal(String jobStorageRootPath,
+                                               String userName,
+                                               String fileName,
+                                               String base64Content) {
+        String uploadPath = NFSUtils.getFileDir(jobStorageRootPath, FileDirTypeConf.UPLOAD_FILE_DIR);
+        String configFileRelativePath = JobUUID.getUUID() + File.separatorChar +
+            userName + File.separatorChar + fileName;
+        String fullFilePath = uploadPath.concat(configFileRelativePath);
+        if (!FileUtil.saveBase64StrToFile(fullFilePath, base64Content)) {
+            throw new InternalException(ErrorCode.FAIL_TO_SAVE_FILE_TO_LOCAL);
         }
-        Integer finalTimeout = timeout;
-        if (timeout <= 0 || timeout > MAX_JOB_TIMEOUT_SECONDS) {
-            finalTimeout = MAX_JOB_TIMEOUT_SECONDS;
-        }
-        return finalTimeout;
+        return configFileRelativePath;
     }
 }

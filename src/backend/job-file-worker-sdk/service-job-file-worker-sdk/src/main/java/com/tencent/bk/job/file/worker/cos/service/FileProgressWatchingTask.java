@@ -27,7 +27,6 @@ package com.tencent.bk.job.file.worker.cos.service;
 import com.tencent.bk.job.common.util.file.PathUtil;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -43,7 +42,6 @@ class FileProgressWatchingTask extends Thread {
     TaskReporter taskReporter;
     FileProgressWatchingTaskEventListener watchingTaskEventListener;
     volatile boolean runFlag = true;
-    CountDownLatch latch = new CountDownLatch(1);
 
     public FileProgressWatchingTask(String taskId, String filePath, String downloadFileDir, AtomicLong fileSize,
                                     AtomicInteger speed, AtomicInteger process, TaskReporter taskReporter,
@@ -58,13 +56,8 @@ class FileProgressWatchingTask extends Thread {
         this.watchingTaskEventListener = watchingTaskEventListener;
     }
 
-    public void stopWatchingAndWaitReportDone() {
+    public void stopWatching() {
         this.runFlag = false;
-        try {
-            latch.wait(30000);
-        } catch (InterruptedException e) {
-            log.warn("Watching task interrupted", e);
-        }
     }
 
     @Override
@@ -89,7 +82,6 @@ class FileProgressWatchingTask extends Thread {
             if (watchingTaskEventListener != null) {
                 watchingTaskEventListener.onWatchingTaskFinally(fileTaskKey);
             }
-            latch.countDown();
         }
         log.debug("end watching:{}", fileTaskKey);
     }
