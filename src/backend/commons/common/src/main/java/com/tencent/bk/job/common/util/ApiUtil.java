@@ -22,14 +22,34 @@
  * IN THE SOFTWARE.
  */
 
-package com.tencent.bk.job.upgrader.utils;
+package com.tencent.bk.job.common.util;
 
-import com.tencent.bk.job.common.util.http.DefaultHttpHelper;
+import java.util.Map;
 
-public class HttpHelperFactory {
-    private static DefaultHttpHelper defaultHttpHelper = new DefaultHttpHelper();
+public class ApiUtil {
 
-    public static DefaultHttpHelper getDefaultHttpHelper() {
-        return defaultHttpHelper;
+    /**
+     * 根据映射关系表或URI本身获取API名称，主要用于解决Prometheus标签不支持斜杠的问题
+     *
+     * @param interfaceNameMap key:uri,value:API名称
+     * @param uri              路径
+     * @return API名称
+     */
+    public static String getApiNameByUri(Map<String, String> interfaceNameMap, String uri) {
+        if (interfaceNameMap != null && interfaceNameMap.containsKey(uri)) {
+            return interfaceNameMap.get(uri);
+        }
+        String uriSeparator = "/";
+        uri = StringUtil.removePrefix(uri, uriSeparator);
+        uri = StringUtil.removeSuffix(uri, uriSeparator);
+        if (uri.contains(uriSeparator)) {
+            String[] uriArr = uri.split(uriSeparator);
+            int len = uriArr.length;
+            String joinSeparator = "_";
+            if (len >= 2) {
+                return uriArr[len - 2] + joinSeparator + uriArr[len - 1];
+            }
+        }
+        return uri;
     }
 }

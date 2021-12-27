@@ -22,25 +22,22 @@
  * IN THE SOFTWARE.
  */
 
-dependencies {
-    api project(':commons:common-i18n')
-    api project(':commons:common-utils')
-    api 'com.fasterxml.jackson.core:jackson-core'
-    api 'com.fasterxml.jackson.core:jackson-databind'
-    api 'com.fasterxml.jackson.core:jackson-annotations'
-    api 'org.apache.commons:commons-lang3'
-    api 'org.apache.commons:commons-collections4'
-    implementation 'io.springfox:springfox-swagger2'
-    implementation 'net.sf.dozer:dozer'
-    implementation 'net.sourceforge.jchardet:jchardet'
-    implementation 'org.apache.httpcomponents:httpclient'
-    implementation 'org.springframework:spring-jdbc'
-    implementation 'org.hibernate.validator:hibernate-validator'
-    implementation 'jakarta.validation:jakarta.validation-api'
-    implementation 'io.micrometer:micrometer-registry-prometheus'
-    compileOnly 'org.springframework:spring-web'
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
-    testImplementation 'org.junit.jupiter:junit-jupiter'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+package com.tencent.bk.job.common.util.http;
+
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+
+public interface HttpHelper {
+
+    CloseableHttpResponse getRawResp(boolean keepAlive, String url, Header[] header);
+
+    Pair<Integer, String> get(boolean keepAlive, String url, Header[] header);
+
+    Pair<Integer, byte[]> post(String url, HttpEntity requestEntity, Header... headers);
+
+    Pair<Integer, String> put(String url, HttpEntity requestEntity, Header... headers);
+
+    Pair<Integer, String> delete(String url, String content, Header... headers);
 }
